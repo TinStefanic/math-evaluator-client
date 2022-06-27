@@ -14,7 +14,7 @@ export default function EvaluationError(props) {
         } else return (
             <>
                 {input.substring(0, startPos - offset)}
-                <span className="text-warning">
+                <span style={{color: "darkmagenta"}}>
                     {input.substring(startPos - offset, endPos - offset)}
                 </span>
                 {input.substring(endPos - offset)}
