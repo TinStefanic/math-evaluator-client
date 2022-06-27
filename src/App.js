@@ -1,23 +1,51 @@
-import logo from './logo.svg';
+//@ts-check
 import './App.css';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import ExpressionInput from './components/expressionInput';
+import DisplayEvaluatorResponse from './components/displayEvaluatorResponse';
 
 function App() {
+  const [input, setInput] = useState("");
+
+  const [response, setResponse] = useState({
+    result: undefined,
+    errorMessage: undefined,
+    errorStartPos: undefined,
+    errorEndPos: undefined,
+    errorOpStartPos: undefined,
+    errorOpEndPos: undefined,
+    input: undefined // Not part of original response, added copy of input.
+  });
+
+  const fetchEvaluationResult = async () => {
+    const urlParams = new URLSearchParams({expression: input});
+    const response = await fetch("http://localhost:40404/api?" + urlParams, {headers: {Accept: "application/json"}});
+
+    const respJson = await response.json();
+    respJson.input = input;
+
+    setResponse(respJson);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="d-flex align-items-center min-vh-100">
+      <div className="container">
+        <div className="row text-center">
+          <div className="col-12">
+            <h1>Mathematical expression evaluator</h1>
+          </div>
+          <div className="col-12">
+            <ExpressionInput input={input} setInput={setInput}/>
+          </div>
+          <div className="col-12">
+            <DisplayEvaluatorResponse response={response}/>
+          </div>
+          <div className="col-12">
+            <Button onClick={fetchEvaluationResult}>Evaluate</Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
